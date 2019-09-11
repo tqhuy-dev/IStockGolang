@@ -38,3 +38,6 @@ func initFrameword(){
 		fmt.Println(err)
 	}
 }
+
+func addController() {
+}
