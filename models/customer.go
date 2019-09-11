@@ -1,9 +1,9 @@
 package models
 
 type Customer struct {
-	FirsrName string
+	FirstName string
 	LastName string
 	Age int
-	Phone int
+	Phone string
 	Address string
 }
