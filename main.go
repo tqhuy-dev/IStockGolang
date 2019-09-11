@@ -7,6 +7,7 @@ import (
 	"os"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	"github.com/tranhuy-dev/IStockGolang/controller"
 )
 func main(){
 	initEnv()
@@ -30,14 +31,11 @@ func initFrameword(){
 	e.Use(middleware.GzipWithConfig(middleware.GzipConfig{
 		Level: 5,
 	}))
-
+	controller.CustomerController(e)
 	port := os.Getenv("PORT")
 	fmt.Printf("Server listening at 3000")
 	err := e.Start(":" + port)
 	if err != nil {
 		fmt.Println(err)
 	}
-}
-
-func addController() {
 }
