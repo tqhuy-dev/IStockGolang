@@ -36,8 +36,13 @@ func init() {
 	Client = client
 }
 
-func InsertCustomer() interface{} {
-	newCustomer := models.Customer{FirstName: "Tran Quoc", LastName: "Huy", Phone: "09463274", Address: "TPHCM", Age: 12}
+func InsertCustomer(req models.CustomerReq) interface{} {
+	newCustomer := models.Customer{
+		FirstName: req.FirstName,
+		LastName: req.LastName,
+		Phone: req.Phone,
+		Address: req.Address,
+		Age: req.Age}
 	customerCollection := Client.Database("IStock").Collection("customer")
 	insertQuery, errorQueryInsert := customerCollection.InsertOne(context.TODO(), newCustomer)
 	if errorQueryInsert != nil {
