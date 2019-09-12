@@ -5,6 +5,8 @@ import (
 	"log"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
+
 	"github.com/tranhuy-dev/IStockGolang/models"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -42,4 +44,34 @@ func InsertCustomer() interface{} {
 		log.Fatal(errorQueryInsert)
 	}
 	return insertQuery.InsertedID
+}
+
+func RetrieveAllCustomer() interface{} {
+	var customer []*models.Customer
+	customerCollection := Client.Database("IStock").Collection("customer")
+	findOptions := options.Find()
+	findOptions.SetLimit(2)
+	cur, err := customerCollection.Find(context.TODO(), bson.D{{}}, findOptions)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for cur.Next(context.TODO()) {
+
+		// create a value into which the single document can be decoded
+		var elem models.Customer
+		err := cur.Decode(&elem)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		customer = append(customer, &elem)
+	}
+
+	if err := cur.Err(); err != nil {
+		log.Fatal(err)
+	}
+
+	cur.Close(context.TODO())
+
+	return customer
 }
