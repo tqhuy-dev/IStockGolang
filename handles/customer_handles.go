@@ -20,3 +20,8 @@ func CreateCustomer(c echo.Context) error {
 	customer := database.InsertCustomer(req)
 	return c.JSON(http.StatusOK, models.SuccessReponse{Code: 200 , Message: "Create success" , Data:customer})
 }
+
+func UpdateCustomer(c echo.Context) error {
+	updateResult := database.UpdateCustomer()
+	return c.JSON(http.StatusOK , updateResult)
+}

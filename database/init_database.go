@@ -80,3 +80,21 @@ func RetrieveAllCustomer() interface{} {
 
 	return customer
 }
+
+func UpdateCustomer() interface{}{
+	customerCollection := Client.Database("IStock").Collection("customer")
+	filter := bson.D{{"first_name","Tran"}}
+
+	updateBody := bson.D{
+		{"$set" , bson.D{
+			{"first_name" , "Jack"},
+			{"last_name","Tran"},
+		}},
+	}
+	updateResult, err := customerCollection.UpdateOne(context.TODO() , filter , updateBody)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return updateResult
+}
