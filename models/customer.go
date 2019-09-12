@@ -1,9 +1,9 @@
 package models
 
 type Customer struct {
-	FirstName string
-	LastName string
-	Age int
-	Phone string
-	Address string
+	FirstName string `bson:"first_name"`
+	LastName string `bson:"last_name"`
+	Age int `bson:"age"`
+	Phone string `bson:"phone"`
+	Address string `bson:"address"`
 }

@@ -7,7 +7,8 @@ import (
 )
 // Get customer
 func GetCustomer(c echo.Context) error {
-	return c.String(http.StatusOK, "Get customer")
+	customer := database.RetrieveAllCustomer()
+	return c.JSON(http.StatusOK, customer)
 }
 // Create customer
 func CreateCustomer(c echo.Context) error {
