@@ -46,7 +46,7 @@ func UpdateCustomer(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusNotFound, models.ErrorResponse{
 			Code: constant.NotFound,
-			Message: "Not found customer"})
+			Message: err.Error()})
 	}
 	return c.JSON(http.StatusOK, models.SuccessReponse{
 		Code:    constant.Success,
@@ -56,8 +56,16 @@ func UpdateCustomer(c echo.Context) error {
 
 func DeleteCustomer(c echo.Context) error {
 	idCustomer := c.Param("email")
-	deleteResult := database.DeleteCustomer(idCustomer)
-	return c.JSON(http.StatusOK, deleteResult)
+	deleteResult,err := database.DeleteCustomer(idCustomer)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, models.ErrorResponse{
+			Code: constant.NotFound,
+			Message: err.Error()})
+	}
+	return c.JSON(http.StatusOK, models.SuccessReponse{
+		Code: constant.Success,
+		Message:"Delete success",
+		Data: deleteResult})
 }
 
 func GetCustomerByEmail(c echo.Context) error {

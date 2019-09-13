@@ -111,7 +111,7 @@ func UpdateCustomer(req models.CustomerReq , email string) (*models.Customer , e
 	return &customer, nil
 }
 
-func DeleteCustomer(email string) interface{} {
+func DeleteCustomer(email string) (*models.Customer , error) {
 	customerCollection := Client.Database("IStock").Collection("customer")
 	filter := bson.D{{"email" , email}}
 	updateBody := bson.D{
@@ -119,16 +119,12 @@ func DeleteCustomer(email string) interface{} {
 			{"status",0},
 		}},
 	}
-
-	_,err := FindUserByEmail(email);
+	var customer models.Customer
+	err := customerCollection.FindOneAndUpdate(context.TODO() , filter , updateBody).Decode(&customer)
 	if err != nil {
-		return "Not found"
+		return nil,errors.New("User not found")
 	}
-	deleteResult, err := customerCollection.UpdateOne(context.TODO() , filter , updateBody)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return deleteResult
+	return &customer,nil
 }
 
 func FindUserByEmail(email string) (*models.Customer, error) {
