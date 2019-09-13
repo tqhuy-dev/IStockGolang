@@ -9,5 +9,5 @@ func CustomerController(e *echo.Echo) {
 	publicRoute := e.Group("/v1/customer")
 	publicRoute.GET("/", handles.GetCustomer)
 	publicRoute.POST("/", handles.CreateCustomer)
-	publicRoute.PUT("/", handles.UpdateCustomer)
+	publicRoute.PUT("/:id", handles.UpdateCustomer)
 }

@@ -1,6 +1,7 @@
 package database
 
 import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"context"
 	"log"
 	"time"
@@ -81,14 +82,18 @@ func RetrieveAllCustomer() interface{} {
 	return customer
 }
 
-func UpdateCustomer() interface{}{
+func UpdateCustomer(req models.CustomerReq , id string) interface{}{
 	customerCollection := Client.Database("IStock").Collection("customer")
-	filter := bson.D{{"first_name","Tran"}}
+	objID , _ := primitive.ObjectIDFromHex(id)
+	filter := bson.D{{"_id",objID}}
 
 	updateBody := bson.D{
 		{"$set" , bson.D{
-			{"first_name" , "Jack"},
-			{"last_name","Tran"},
+			{"first_name" , req.FirstName},
+			{"last_name",req.LastName},
+			{"age",req.Age},
+			{"phone",req.Phone},
+			{"address",req.Address},
 		}},
 	}
 	updateResult, err := customerCollection.UpdateOne(context.TODO() , filter , updateBody)

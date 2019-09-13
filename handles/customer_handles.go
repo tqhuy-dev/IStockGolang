@@ -22,6 +22,11 @@ func CreateCustomer(c echo.Context) error {
 }
 
 func UpdateCustomer(c echo.Context) error {
-	updateResult := database.UpdateCustomer()
+	var req models.CustomerReq
+	idCustomer := c.Param("id")
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest , models.ErrorResponse{Code: 404 , Message: "Bad request"})
+	}
+	updateResult := database.UpdateCustomer(req , idCustomer)
 	return c.JSON(http.StatusOK , updateResult)
 }
