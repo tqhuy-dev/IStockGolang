@@ -49,9 +49,9 @@ func InsertCustomer(req models.CustomerReq) interface{} {
 	if errorQueryInsert != nil {
 		log.Fatal(errorQueryInsert)
 	}
-	hashToken := sha256.New()
+	hashToken := sha256.Sum256([]byte(newCustomer.Email))
 	responseBody := map[string]interface{}{}
-	responseBody["token"] = hashToken
+	responseBody["token"] = hashToken[:]
 	return responseBody
 }
 
