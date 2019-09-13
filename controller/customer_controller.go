@@ -9,6 +9,7 @@ func CustomerController(e *echo.Echo) {
 	publicRoute := e.Group("/v1/customer")
 	publicRoute.GET("/", handles.GetCustomer)
 	publicRoute.GET("/:email", handles.GetCustomerByEmail)
+	publicRoute.POST("/password" , handles.ChangePassword)
 	publicRoute.POST("/", handles.CreateCustomer)
 	publicRoute.PUT("/:email", handles.UpdateCustomer)
 	publicRoute.DELETE("/:email" , handles.DeleteCustomer)

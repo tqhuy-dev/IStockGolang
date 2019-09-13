@@ -167,3 +167,24 @@ func Syncnorize() {
 	}
 	customerCollection.UpdateMany(context.TODO(),bson.D{{}} , updateBody)
 }
+
+func ChangePassword(passwordReq models.ChangePasswordReq) (*models.Customer , error) {
+	customerCollection := Client.Database("IStock").Collection("customer")
+	filter := bson.D{
+		{"password",passwordReq.OldPassword},
+		{"email",passwordReq.Email},
+	}
+
+	updateBody := bson.D{
+		{"$set", bson.D{
+			{"password",passwordReq.NewPassword},
+		}},
+	}
+
+	var customer models.Customer
+	err := customerCollection.FindOneAndUpdate(context.TODO() , filter , updateBody).Decode(&customer)
+	if err != nil {
+		return nil,errors.New("Change password fail")
+	}
+	return &customer,nil
+}

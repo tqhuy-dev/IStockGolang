@@ -23,14 +23,14 @@ func CreateCustomer(c echo.Context) error {
 	var req models.CustomerReq
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(http.StatusBadRequest, models.ErrorResponse{
-			Code: constant.BadRequest,
+			Code:    constant.BadRequest,
 			Message: "Bad parameter"})
 	}
 	customer := database.InsertCustomer(req)
 	return c.JSON(http.StatusOK, models.SuccessReponse{
-		Code: constant.Success,
+		Code:    constant.Success,
 		Message: "Create success",
-		Data: customer})
+		Data:    customer})
 }
 
 func UpdateCustomer(c echo.Context) error {
@@ -38,14 +38,14 @@ func UpdateCustomer(c echo.Context) error {
 	idCustomer := c.Param("email")
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(http.StatusBadRequest, models.ErrorResponse{
-			Code: constant.BadRequest,
+			Code:    constant.BadRequest,
 			Message: "Bad request"})
 	}
 	updateResult, err := database.UpdateCustomer(req, idCustomer)
 
 	if err != nil {
 		return c.JSON(http.StatusNotFound, models.ErrorResponse{
-			Code: constant.NotFound,
+			Code:    constant.NotFound,
 			Message: err.Error()})
 	}
 	return c.JSON(http.StatusOK, models.SuccessReponse{
@@ -56,16 +56,16 @@ func UpdateCustomer(c echo.Context) error {
 
 func DeleteCustomer(c echo.Context) error {
 	idCustomer := c.Param("email")
-	deleteResult,err := database.DeleteCustomer(idCustomer)
+	deleteResult, err := database.DeleteCustomer(idCustomer)
 	if err != nil {
 		return c.JSON(http.StatusNotFound, models.ErrorResponse{
-			Code: constant.NotFound,
+			Code:    constant.NotFound,
 			Message: err.Error()})
 	}
 	return c.JSON(http.StatusOK, models.SuccessReponse{
-		Code: constant.Success,
-		Message:"Delete success",
-		Data: deleteResult})
+		Code:    constant.Success,
+		Message: "Delete success",
+		Data:    deleteResult})
 }
 
 func GetCustomerByEmail(c echo.Context) error {
@@ -75,4 +75,25 @@ func GetCustomerByEmail(c echo.Context) error {
 		return c.JSON(http.StatusOK, models.ErrorResponse{Code: constant.NotFound, Message: err.Error()})
 	}
 	return c.JSON(http.StatusOK, customerData)
+}
+
+func ChangePassword(c echo.Context) error {
+	var req models.ChangePasswordReq
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, models.ErrorResponse{
+			Code:    constant.BadRequest,
+			Message: "Bad request"})
+	}
+
+	dataChangePassword, err := database.ChangePassword(req)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, models.ErrorResponse{
+			Code:    401,
+			Message: err.Error(),
+		})
+	}
+	return c.JSON(http.StatusOK, models.SuccessReponse{
+		Code:    201,
+		Message: "Change password success",
+		Data: dataChangePassword})
 }
