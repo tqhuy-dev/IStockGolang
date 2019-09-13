@@ -89,8 +89,9 @@ func RetrieveAllCustomer() interface{} {
 	return responseBody
 }
 
-func UpdateCustomer(req models.CustomerReq , email string) int{
+func UpdateCustomer(req models.CustomerReq , email string) (*models.Customer , error){
 	customerCollection := Client.Database("IStock").Collection("customer")
+
 	filter := bson.D{{"email",email}}
 
 	updateBody := bson.D{
@@ -102,11 +103,12 @@ func UpdateCustomer(req models.CustomerReq , email string) int{
 			{"address",req.Address},
 		}},
 	}
-	updateResult, err := customerCollection.UpdateOne(context.TODO() , filter , updateBody)
+	var customer models.Customer
+	err := customerCollection.FindOneAndUpdate(context.TODO() , filter , updateBody).Decode(&customer)
 	if err != nil {
-		log.Fatal(err)
+		return nil , errors.New("User not found")
 	}
-	return int(updateResult.MatchedCount)
+	return &customer, nil
 }
 
 func DeleteCustomer(email string) interface{} {
