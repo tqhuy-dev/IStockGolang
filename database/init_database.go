@@ -4,6 +4,8 @@ import (
 	"context"
 	"log"
 	"time"
+	"fmt"
+	"errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"crypto/sha256"
 	"github.com/tranhuy-dev/IStockGolang/models"
@@ -115,6 +117,11 @@ func DeleteCustomer(email string) interface{} {
 			{"status",0},
 		}},
 	}
+
+	_,err := FindUserByEmail(email);
+	if err != nil {
+		return "Not found"
+	}
 	deleteResult, err := customerCollection.UpdateOne(context.TODO() , filter , updateBody)
 	if err != nil {
 		log.Fatal(err)
@@ -122,17 +129,32 @@ func DeleteCustomer(email string) interface{} {
 	return deleteResult
 }
 
-func FindUserByEmail(email string) interface{} {
+func FindUserByEmail(email string) (*models.Customer, error) {
 	var customer models.Customer
 	customerCollection := Client.Database("IStock").Collection("customer")
 	err := customerCollection.FindOne(context.TODO() , bson.D{
 		{"email" , email},
 	}).Decode(&customer)
-
-	dataResponse := map[string]interface{}{}
 	if err != nil {
-		dataResponse["message"] = "email not found";
-		return dataResponse
+		return nil, errors.New("ko the tim user")
 	}
-	return customer
+	return &customer,nil
+}
+func IncID() interface{} {
+	var sequenceID models.SequenceID
+	seCollection := Client.Database("IStock").Collection("sequence")
+	filter := bson.D{{"sequence_type","sequence_id"}}
+	updateBody := bson.D{
+		{"$inc", bson.D{
+			{"count",1},
+		}},
+	}
+	seCollection.UpdateOne(context.TODO() , filter , updateBody)
+
+	err := seCollection.FindOne(context.TODO() , filter).Decode(&sequenceID)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Printf("mysequence %+v",sequenceID)
+	return sequenceID.Count
 }

@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"github.com/labstack/echo"
 	"github.com/tranhuy-dev/IStockGolang/database"
-	"github.com/tranhuy-dev/IStockGolang/constant"
+	"github.com/tranhuy-dev/IStockGolang/core/constant"
 	models "github.com/tranhuy-dev/IStockGolang/models"
 )
 // Get customer
@@ -52,6 +52,9 @@ func DeleteCustomer(c echo.Context) error {
 
 func GetCustomerByEmail(c echo.Context) error {
 	idCustomer := c.Param("email")
-	customerData := database.FindUserByEmail(idCustomer)
+	customerData,err := database.FindUserByEmail(idCustomer)
+	if err != nil {
+		return c.JSON(http.StatusOK , models.ErrorResponse{Code: constant.NotFound, Message: err.Error()})
+	}
 	return c.JSON(http.StatusOK , customerData)
 }
