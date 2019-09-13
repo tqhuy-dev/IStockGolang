@@ -23,7 +23,7 @@ func CreateCustomer(c echo.Context) error {
 
 func UpdateCustomer(c echo.Context) error {
 	var req models.CustomerReq
-	idCustomer := c.Param("id")
+	idCustomer := c.Param("email")
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(http.StatusBadRequest , models.ErrorResponse{Code: 404 , Message: "Bad request"})
 	}
@@ -32,7 +32,7 @@ func UpdateCustomer(c echo.Context) error {
 }
 
 func DeleteCustomer(c echo.Context) error {
-	idCustomer := c.Param("id")
+	idCustomer := c.Param("email")
 	deleteResult := database.DeleteCustomer(idCustomer)
 	return c.JSON(http.StatusOK , deleteResult)
 }

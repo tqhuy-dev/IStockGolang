@@ -1,7 +1,6 @@
 package database
 
 import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"context"
 	"log"
 	"time"
@@ -44,7 +43,8 @@ func InsertCustomer(req models.CustomerReq) interface{} {
 		Phone: req.Phone,
 		Address: req.Address,
 		Age: req.Age,
-		Status:1}
+		Status:1,
+		Email:req.Email}
 	customerCollection := Client.Database("IStock").Collection("customer")
 	insertQuery, errorQueryInsert := customerCollection.InsertOne(context.TODO(), newCustomer)
 	if errorQueryInsert != nil {
@@ -83,10 +83,9 @@ func RetrieveAllCustomer() interface{} {
 	return customer
 }
 
-func UpdateCustomer(req models.CustomerReq , id string) interface{}{
+func UpdateCustomer(req models.CustomerReq , email string) interface{}{
 	customerCollection := Client.Database("IStock").Collection("customer")
-	objID , _ := primitive.ObjectIDFromHex(id)
-	filter := bson.D{{"_id",objID}}
+	filter := bson.D{{"email",email}}
 
 	updateBody := bson.D{
 		{"$set" , bson.D{
@@ -105,10 +104,9 @@ func UpdateCustomer(req models.CustomerReq , id string) interface{}{
 	return updateResult
 }
 
-func DeleteCustomer(id string) interface{} {
+func DeleteCustomer(email string) interface{} {
 	customerCollection := Client.Database("IStock").Collection("customer")
-	objID, _ := primitive.ObjectIDFromHex(id)
-	filter := bson.D{{"_id" , objID}}
+	filter := bson.D{{"email" , email}}
 	updateBody := bson.D{
 		{"$set", bson.D{
 			{"status",0},

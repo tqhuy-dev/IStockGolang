@@ -1,5 +1,6 @@
 package models
 
+
 type Customer struct {
 	FirstName string `bson:"first_name"`
 	LastName string `bson:"last_name"`
@@ -7,4 +8,5 @@ type Customer struct {
 	Phone string `bson:"phone"`
 	Address string `bson:"address"`
 	Status int `bson:"status"`
+	Email string `bson:"email"`
 }

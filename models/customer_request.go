@@ -6,4 +6,5 @@ type CustomerReq struct {
 	Phone string `json:"phone"`
 	Age int `json:"age"`
 	Address string `json:"address"`
+	Email string `json:"email"`
 }
