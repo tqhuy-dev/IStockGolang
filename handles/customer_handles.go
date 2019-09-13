@@ -9,7 +9,10 @@ import (
 // Get customer
 func GetCustomer(c echo.Context) error {
 	customer := database.RetrieveAllCustomer()
-	return c.JSON(http.StatusOK, customer)
+	return c.JSON(http.StatusOK, models.SuccessReponse{
+		Code: 200 ,
+		Message: "Retrieve customers success" ,
+		Data: customer})
 }
 // Create customer
 func CreateCustomer(c echo.Context) error {

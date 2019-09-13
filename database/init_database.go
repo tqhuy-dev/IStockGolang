@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
-
+	"crypto/sha256"
 	"github.com/tranhuy-dev/IStockGolang/models"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -46,18 +46,21 @@ func InsertCustomer(req models.CustomerReq) interface{} {
 		Status:1,
 		Email:req.Email}
 	customerCollection := Client.Database("IStock").Collection("customer")
-	insertQuery, errorQueryInsert := customerCollection.InsertOne(context.TODO(), newCustomer)
+	_, errorQueryInsert := customerCollection.InsertOne(context.TODO(), newCustomer)
 	if errorQueryInsert != nil {
 		log.Fatal(errorQueryInsert)
 	}
-	return insertQuery.InsertedID
+	hashToken := sha256.New()
+	responseBody := map[string]interface{}{}
+	responseBody["token"] = hashToken
+	return responseBody
 }
 
 func RetrieveAllCustomer() interface{} {
 	var customer []*models.Customer
 	customerCollection := Client.Database("IStock").Collection("customer")
 	findOptions := options.Find()
-	findOptions.SetLimit(2)
+	findOptions.SetLimit(100)
 	cur, err := customerCollection.Find(context.TODO(), bson.D{{}}, findOptions)
 	if err != nil {
 		log.Fatal(err)
@@ -79,8 +82,10 @@ func RetrieveAllCustomer() interface{} {
 	}
 
 	cur.Close(context.TODO())
-
-	return customer
+	responseBody := map[string]interface{}{}
+	responseBody["customer"] = customer
+	responseBody["size"] = len(customer)
+	return responseBody
 }
 
 func UpdateCustomer(req models.CustomerReq , email string) interface{}{
