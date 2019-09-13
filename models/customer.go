@@ -9,4 +9,5 @@ type Customer struct {
 	Address string `bson:"address" json:"address"`
 	Status int `bson:"status" json:"status"`
 	Email string `bson:"email" json:"email"`
+	Password string `bson:"password" json:"password"`
 }

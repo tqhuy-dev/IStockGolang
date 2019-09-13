@@ -45,7 +45,8 @@ func InsertCustomer(req models.CustomerReq) interface{} {
 		Address: req.Address,
 		Age: req.Age,
 		Status:1,
-		Email:req.Email}
+		Email:req.Email,
+		Password:req.Password}
 	customerCollection := Client.Database("IStock").Collection("customer")
 	_, errorQueryInsert := customerCollection.InsertOne(context.TODO(), newCustomer)
 	if errorQueryInsert != nil {
@@ -155,4 +156,14 @@ func IncID() interface{} {
 	}
 	fmt.Printf("mysequence %+v",sequenceID)
 	return sequenceID.Count
+}
+
+func Syncnorize() {
+	customerCollection := Client.Database("IStock").Collection("customer")
+	updateBody := bson.D{
+		{"$set",bson.D{
+			{"password","123456"},
+		}},
+	}
+	customerCollection.UpdateMany(context.TODO(),bson.D{{}} , updateBody)
 }
