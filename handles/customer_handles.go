@@ -30,3 +30,9 @@ func UpdateCustomer(c echo.Context) error {
 	updateResult := database.UpdateCustomer(req , idCustomer)
 	return c.JSON(http.StatusOK , updateResult)
 }
+
+func DeleteCustomer(c echo.Context) error {
+	idCustomer := c.Param("id")
+	deleteResult := database.DeleteCustomer(idCustomer)
+	return c.JSON(http.StatusOK , deleteResult)
+}

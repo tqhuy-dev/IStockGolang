@@ -10,4 +10,5 @@ func CustomerController(e *echo.Echo) {
 	publicRoute.GET("/", handles.GetCustomer)
 	publicRoute.POST("/", handles.CreateCustomer)
 	publicRoute.PUT("/:id", handles.UpdateCustomer)
+	publicRoute.DELETE("/:id" , handles.DeleteCustomer)
 }

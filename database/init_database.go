@@ -43,7 +43,8 @@ func InsertCustomer(req models.CustomerReq) interface{} {
 		LastName: req.LastName,
 		Phone: req.Phone,
 		Address: req.Address,
-		Age: req.Age}
+		Age: req.Age,
+		Status:1}
 	customerCollection := Client.Database("IStock").Collection("customer")
 	insertQuery, errorQueryInsert := customerCollection.InsertOne(context.TODO(), newCustomer)
 	if errorQueryInsert != nil {
@@ -102,4 +103,20 @@ func UpdateCustomer(req models.CustomerReq , id string) interface{}{
 	}
 
 	return updateResult
+}
+
+func DeleteCustomer(id string) interface{} {
+	customerCollection := Client.Database("IStock").Collection("customer")
+	objID, _ := primitive.ObjectIDFromHex(id)
+	filter := bson.D{{"_id" , objID}}
+	updateBody := bson.D{
+		{"$set", bson.D{
+			{"status",0},
+		}},
+	}
+	deleteResult, err := customerCollection.UpdateOne(context.TODO() , filter , updateBody)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return deleteResult
 }

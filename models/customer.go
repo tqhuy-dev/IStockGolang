@@ -6,4 +6,5 @@ type Customer struct {
 	Age int `bson:"age"`
 	Phone string `bson:"phone"`
 	Address string `bson:"address"`
+	Status int `bson:"status"`
 }
