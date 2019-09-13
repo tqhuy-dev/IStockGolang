@@ -121,3 +121,18 @@ func DeleteCustomer(email string) interface{} {
 	}
 	return deleteResult
 }
+
+func FindUserByEmail(email string) interface{} {
+	var customer models.Customer
+	customerCollection := Client.Database("IStock").Collection("customer")
+	err := customerCollection.FindOne(context.TODO() , bson.D{
+		{"email" , email},
+	}).Decode(&customer)
+
+	dataResponse := map[string]interface{}{}
+	if err != nil {
+		dataResponse["message"] = "email not found";
+		return dataResponse
+	}
+	return customer
+}

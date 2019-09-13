@@ -49,3 +49,9 @@ func DeleteCustomer(c echo.Context) error {
 	deleteResult := database.DeleteCustomer(idCustomer)
 	return c.JSON(http.StatusOK , deleteResult)
 }
+
+func GetCustomerByEmail(c echo.Context) error {
+	idCustomer := c.Param("email")
+	customerData := database.FindUserByEmail(idCustomer)
+	return c.JSON(http.StatusOK , customerData)
+}
