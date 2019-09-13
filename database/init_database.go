@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 	"time"
-
 	"go.mongodb.org/mongo-driver/bson"
 	"crypto/sha256"
 	"github.com/tranhuy-dev/IStockGolang/models"
@@ -88,7 +87,7 @@ func RetrieveAllCustomer() interface{} {
 	return responseBody
 }
 
-func UpdateCustomer(req models.CustomerReq , email string) interface{}{
+func UpdateCustomer(req models.CustomerReq , email string) int{
 	customerCollection := Client.Database("IStock").Collection("customer")
 	filter := bson.D{{"email",email}}
 
@@ -105,8 +104,7 @@ func UpdateCustomer(req models.CustomerReq , email string) interface{}{
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	return updateResult
+	return int(updateResult.MatchedCount)
 }
 
 func DeleteCustomer(email string) interface{} {

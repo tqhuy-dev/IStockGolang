@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"github.com/labstack/echo"
 	"github.com/tranhuy-dev/IStockGolang/database"
+	"github.com/tranhuy-dev/IStockGolang/constant"
 	models "github.com/tranhuy-dev/IStockGolang/models"
 )
 // Get customer
@@ -18,20 +19,29 @@ func GetCustomer(c echo.Context) error {
 func CreateCustomer(c echo.Context) error {
 	var req models.CustomerReq
 	if err := c.Bind(&req); err != nil {
-		return c.JSON(http.StatusBadRequest, models.ErrorResponse{Code: 404, Message: "Bad parameter"})
+		return c.JSON(http.StatusBadRequest, models.ErrorResponse{Code: constant.BadRequest, Message: "Bad parameter"})
 	}
 	customer := database.InsertCustomer(req)
-	return c.JSON(http.StatusOK, models.SuccessReponse{Code: 200 , Message: "Create success" , Data:customer})
+	return c.JSON(http.StatusOK, models.SuccessReponse{Code: constant.Success , Message: "Create success" , Data:customer})
 }
 
 func UpdateCustomer(c echo.Context) error {
 	var req models.CustomerReq
 	idCustomer := c.Param("email")
 	if err := c.Bind(&req); err != nil {
-		return c.JSON(http.StatusBadRequest , models.ErrorResponse{Code: 404 , Message: "Bad request"})
+		return c.JSON(http.StatusBadRequest , models.ErrorResponse{Code: constant.BadRequest , Message: "Bad request"})
 	}
 	updateResult := database.UpdateCustomer(req , idCustomer)
-	return c.JSON(http.StatusOK , updateResult)
+
+	if updateResult == 0  {
+		return c.JSON(http.StatusNotFound , models.ErrorResponse{Code: constant.NotFound , Message:"Not found customer"})
+	} else if updateResult == 1{
+		return c.JSON(http.StatusOK , models.SuccessReponse{
+			Code: constant.Success,
+			Message:"update success"})
+	}
+
+	return c.JSON(http.StatusOK , updateResult) 
 }
 
 func DeleteCustomer(c echo.Context) error {
