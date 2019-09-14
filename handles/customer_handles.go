@@ -97,3 +97,18 @@ func ChangePassword(c echo.Context) error {
 		Message: "Change password success",
 		Data: dataChangePassword})
 }
+
+func FindUserByFilter(c echo.Context) error {
+	customers , err := database.RetrieveCustomerByFilter()
+	if err != nil {
+		return c.JSON(http.StatusBadGateway , models.ErrorResponse{
+			Code: constant.ExpectedError,
+			Message: err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK , models.SuccessReponse{
+		Code: 200 , 
+		Message: "Retrieve customer filter",
+		Data: customers})
+}

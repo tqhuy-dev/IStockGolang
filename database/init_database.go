@@ -188,3 +188,38 @@ func ChangePassword(passwordReq models.ChangePasswordReq) (*models.Customer , er
 	}
 	return &customer,nil
 }
+
+func RetrieveCustomerByFilter() ([]*models.Customer, error) {
+	filter := bson.D{
+		{"age",12},
+		{"address","TPHCM"},
+	}
+
+	customerCollection := Client.Database("IStock").Collection("customer")
+	var customers []*models.Customer
+
+	findOption := options.Find()
+	findOption.SetLimit(100)
+
+	cur,err := customerCollection.Find(context.TODO() , filter , findOption)
+	if err != nil {
+		return nil , errors.New("Unexpected Error")
+	}
+	for cur.Next(context.TODO()) {
+		var element models.Customer
+		err := cur.Decode(&element)
+		if err != nil {
+			return nil , errors.New("Unexpected Error")
+		}
+
+		customers = append(customers , &element)
+	}
+
+	if err := cur.Err(); err != nil {
+		return nil , errors.New("Unexpected Error")
+	}
+
+	cur.Close(context.TODO())
+
+	return customers , nil
+}
