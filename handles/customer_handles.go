@@ -2,7 +2,7 @@ package handles
 
 import (
 	"net/http"
-
+	"strconv"
 	"github.com/labstack/echo"
 	"github.com/tranhuy-dev/IStockGolang/core/constant"
 	"github.com/tranhuy-dev/IStockGolang/database"
@@ -99,7 +99,10 @@ func ChangePassword(c echo.Context) error {
 }
 
 func FindUserByFilter(c echo.Context) error {
-	customers , err := database.RetrieveCustomerByFilter()
+	var filterBody models.FilterUser
+	filterBody.Age,_= strconv.Atoi(c.FormValue("age"))
+	filterBody.Address= c.FormValue("address")
+	customers , err := database.RetrieveCustomerByFilter(filterBody)
 	if err != nil {
 		return c.JSON(http.StatusBadGateway , models.ErrorResponse{
 			Code: constant.ExpectedError,

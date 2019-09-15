@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"crypto/sha256"
 	"github.com/tranhuy-dev/IStockGolang/models"
+	"github.com/tranhuy-dev/IStockGolang/core/constant"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -107,7 +108,7 @@ func UpdateCustomer(req models.CustomerReq , email string) (*models.Customer , e
 	var customer models.Customer
 	err := customerCollection.FindOneAndUpdate(context.TODO() , filter , updateBody).Decode(&customer)
 	if err != nil {
-		return nil , errors.New("User not found")
+		return nil , errors.New(constant.MessageUserNotFound)
 	}
 	return &customer, nil
 }
@@ -123,7 +124,7 @@ func DeleteCustomer(email string) (*models.Customer , error) {
 	var customer models.Customer
 	err := customerCollection.FindOneAndUpdate(context.TODO() , filter , updateBody).Decode(&customer)
 	if err != nil {
-		return nil,errors.New("User not found")
+		return nil,errors.New(constant.MessageUserNotFound)
 	}
 	return &customer,nil
 }
@@ -135,7 +136,7 @@ func FindUserByEmail(email string) (*models.Customer, error) {
 		{"email" , email},
 	}).Decode(&customer)
 	if err != nil {
-		return nil, errors.New("ko the tim user")
+		return nil, errors.New(constant.MessageUserNotFound)
 	}
 	return &customer,nil
 }
@@ -189,10 +190,10 @@ func ChangePassword(passwordReq models.ChangePasswordReq) (*models.Customer , er
 	return &customer,nil
 }
 
-func RetrieveCustomerByFilter() ([]*models.Customer, error) {
+func RetrieveCustomerByFilter(filterBody models.FilterUser) ([]*models.Customer, error) {
 	filter := bson.D{
-		{"age",12},
-		{"address","TPHCM"},
+		{"age",filterBody.Age},
+		{"address",filterBody.Address},
 	}
 
 	customerCollection := Client.Database("IStock").Collection("customer")
@@ -203,20 +204,20 @@ func RetrieveCustomerByFilter() ([]*models.Customer, error) {
 
 	cur,err := customerCollection.Find(context.TODO() , filter , findOption)
 	if err != nil {
-		return nil , errors.New("Unexpected Error")
+		return nil , errors.New(constant.MessageUnexpectedError)
 	}
 	for cur.Next(context.TODO()) {
 		var element models.Customer
 		err := cur.Decode(&element)
 		if err != nil {
-			return nil , errors.New("Unexpected Error")
+			return nil , errors.New(constant.MessageUnexpectedError)
 		}
 
 		customers = append(customers , &element)
 	}
 
 	if err := cur.Err(); err != nil {
-		return nil , errors.New("Unexpected Error")
+		return nil , errors.New(constant.MessageUnexpectedError)
 	}
 
 	cur.Close(context.TODO())
