@@ -3,6 +3,7 @@ package handles
 import (
 	"net/http"
 	"strconv"
+	"crypto/sha256"
 	"github.com/labstack/echo"
 	"github.com/tranhuy-dev/IStockGolang/core/constant"
 	"github.com/tranhuy-dev/IStockGolang/database"
@@ -114,4 +115,29 @@ func FindUserByFilter(c echo.Context) error {
 		Code: 200 , 
 		Message: "Retrieve customer filter",
 		Data: customers})
+}
+
+func LoginAccount(c echo.Context) error {
+	var loginBody models.LoginBody
+	err := c.Bind(&loginBody)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.ErrorResponse{
+			Code:    constant.BadRequest,
+			Message: "Bad parameter"})
+	}
+
+	customer , err := database.LoginAccount(loginBody)
+	if err != nil {
+		return c.JSON(http.StatusNotFound,models.ErrorResponse{
+			Code: constant.NotFound,
+			Message: err.Error()})
+	}
+	hashtoken := sha256.Sum256([]byte(customer.Email))
+	dataResponse := map[string]interface{}{}
+	dataResponse["customer"] = customer;
+	dataResponse["token"] = hashtoken[:];
+	return c.JSON(http.StatusOK,models.SuccessReponse{
+		Code: constant.Success,
+		Message: "Login success",
+		Data: dataResponse})
 }

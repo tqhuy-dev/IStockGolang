@@ -224,3 +224,19 @@ func RetrieveCustomerByFilter(filterBody models.FilterUser) ([]*models.Customer,
 
 	return customers , nil
 }
+
+func LoginAccount(loginBody models.LoginBody) (*models.Customer , error) {
+	customerCollection := Client.Database("IStock").Collection("customer")
+	// fmt.Println(loginBody)
+	filter := bson.D{
+		{"email",loginBody.Email},
+		{"password" , loginBody.Password},
+	}
+
+	var customer models.Customer
+	err := customerCollection.FindOne(context.TODO(),filter).Decode(&customer)
+	if err != nil {
+		return nil,errors.New("Login fail")
+	}
+	return &customer,nil
+}
