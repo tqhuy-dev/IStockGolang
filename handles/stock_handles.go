@@ -20,7 +20,7 @@ func CreateStockHandles(c echo.Context) error{
 	if err != nil {
 		return c.JSON(http.StatusForbidden , models.ErrorResponse{
 			Code: constant.ExpectedError,
-			Message: "Add stock fail"})
+			Message: err.Error()})
 	}
 
 	return c.JSON(http.StatusOK , models.SuccessReponse{

@@ -3,6 +3,7 @@ import (
 	"context"
 	"errors"
 	"github.com/tranhuy-dev/IStockGolang/models"
+	"github.com/tranhuy-dev/IStockGolang/core/constant"
 )
 
 func CreateStock(stock models.Stock) (interface{} , error){
@@ -15,6 +16,10 @@ func CreateStock(stock models.Stock) (interface{} , error){
 		Price: stock.Price,
 		Status: stock.Status}
 
+	_ , searchUserError := FindUserByEmail(stock.Customer)
+	if searchUserError  != nil {
+		return nil , errors.New(constant.MessageUserNotFound)
+	}
 	insertResult , insertError := stockCollection.InsertOne(context.TODO() , newStock)
 	if insertError != nil {
 		return nil,errors.New("Insert fail") 
