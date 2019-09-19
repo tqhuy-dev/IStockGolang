@@ -181,9 +181,14 @@ func ChangePassword(passwordReq models.ChangePasswordReq) (*models.Customer , er
 }
 
 func RetrieveCustomerByFilter(filterBody models.FilterUser) ([]*models.Customer, error) {
-	filter := bson.D{
-		{"age",filterBody.Age},
-		{"address",filterBody.Address},
+	filter := bson.M{}
+
+	if filterBody.Age != 0 {
+		filter["age"] = filterBody.Age
+	}
+
+	if filterBody.Address != "" {
+		filter["address"] = filterBody.Address
 	}
 
 	customerCollection := Client.Database("IStock").Collection("customer")
