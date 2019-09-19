@@ -32,6 +32,7 @@ func initFrameword(){
 		Level: 5,
 	}))
 	controller.CustomerController(e)
+	controller.StockController(e)
 	port := os.Getenv("PORT")
 	fmt.Printf("Server listening at 3000")
 	err := e.Start(":" + port)
