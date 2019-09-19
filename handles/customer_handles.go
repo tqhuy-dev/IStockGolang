@@ -103,6 +103,7 @@ func FindUserByFilter(c echo.Context) error {
 	var filterBody models.FilterUser
 	filterBody.Age,_= strconv.Atoi(c.FormValue("age"))
 	filterBody.Address= c.FormValue("address")
+	filterBody.Name = c.FormValue("name")
 	customers , err := database.RetrieveCustomerByFilter(filterBody)
 	if err != nil {
 		return c.JSON(http.StatusBadGateway , models.ErrorResponse{

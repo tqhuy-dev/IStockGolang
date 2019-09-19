@@ -10,6 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"crypto/sha256"
 	"github.com/tranhuy-dev/IStockGolang/core/constant"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func LoginAccount(loginBody models.LoginBody) (*models.Customer , error) {
@@ -189,6 +190,14 @@ func RetrieveCustomerByFilter(filterBody models.FilterUser) ([]*models.Customer,
 
 	if filterBody.Address != "" {
 		filter["address"] = filterBody.Address
+	}
+
+	if filterBody.Name != "" {
+		filter["$or"] = bson.A{
+			bson.M{"first_name" : primitive.Regex{Pattern: filterBody.Name, Options:"i"}},
+			bson.M{"last_name" : primitive.Regex{Pattern: filterBody.Name, Options:"i"}},
+		}
+
 	}
 
 	customerCollection := Client.Database("IStock").Collection("customer")
