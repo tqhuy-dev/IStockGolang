@@ -38,3 +38,20 @@ func CreateStockHandles(c echo.Context) error {
 		Message: "Add stock success",
 		Data:    dataStock})
 }
+
+func RetriveStockByEmail(c echo.Context) error {
+	email := c.FormValue("email")
+
+	dataStock, err := database.RetrieveStockUser(email)
+
+	if err != nil {
+		return c.JSON(http.StatusNotFound, models.ErrorResponse{
+			Code:    constant.NotFound,
+			Message: constant.MessageUserNotFound})
+	}
+
+	return c.JSON(http.StatusOK, models.SuccessReponse{
+		Code:    constant.Success,
+		Message: "Retrice success",
+		Data:    dataStock})
+}

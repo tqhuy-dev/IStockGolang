@@ -1,7 +1,9 @@
 package database
 import (
+	"go.mongodb.org/mongo-driver/bson"
 	"context"
 	"errors"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"github.com/tranhuy-dev/IStockGolang/models"
 	"github.com/tranhuy-dev/IStockGolang/core/constant"
 )
@@ -28,4 +30,31 @@ func CreateStock(stock models.Stock) (interface{} , error){
 		return nil,errors.New("Insert fail") 
 	}
 	return insertResult, nil
+}
+
+func RetrieveStockUser(email string) ([]*models.Stock, error) {
+	stockCollection := Client.Database("IStock").Collection("stock")
+	var listStock []*models.Stock
+	findOption := options.Find()
+	findOption.SetLimit(100)
+	filter := bson.D{
+		{"customer" , email}}
+	
+	cur, err := stockCollection.Find(context.TODO() , filter , findOption)
+	if err != nil {
+		return nil , errors.New("User not found")
+	}
+
+	for cur.Next(context.TODO()) {
+		var elementStock models.Stock
+		err := cur.Decode(&elementStock)
+
+		if err != nil {
+			return nil , errors.New(constant.MessageUnexpectedError)
+		}
+
+		listStock = append(listStock  , &elementStock)
+	}
+
+	return listStock , nil
 }
