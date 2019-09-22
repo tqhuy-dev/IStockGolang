@@ -6,4 +6,5 @@ type Stock struct {
 	Description string `json:"description" bson:"description"`
 	Status string `json:"status" bson:"status"`
 	Price string `json:"price" bson:"price"`
+	ID int `json:"id" bson:"id"`
 }
