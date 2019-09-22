@@ -5,6 +5,11 @@ type Stock struct {
 	Name string `json:"name" bson:"name"`
 	Description string `json:"description" bson:"description"`
 	Status string `json:"status" bson:"status"`
-	Price string `json:"price" bson:"price"`
+	Price Price `json:"price" bson:"price"`
 	ID int `json:"id" bson:"id"`
+}
+
+type Price struct {
+	Available int `json:"available" bson:"available"`
+	Sold int `json:"sold" bson:"sold"`
 }

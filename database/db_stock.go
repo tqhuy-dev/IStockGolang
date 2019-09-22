@@ -18,7 +18,6 @@ func CreateStock(stock models.Stock) (interface{} , error){
 		Customer: stock.Customer,
 		Description: stock.Description,
 		Name: stock.Name,
-		Price: stock.Price,
 		Status: stock.Status,
 		ID: idStock}
 
