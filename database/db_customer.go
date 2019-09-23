@@ -243,7 +243,7 @@ func SendMail() (interface{}, error) {
 	plainTextContent := "and easy to do anywhere, even with Go"
 	htmlContent := "<strong>and easy to do anywhere, even with Go</strong>"
 	message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
-	client := sendgrid.NewSendClient("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")
+	client := sendgrid.NewSendClient(SendgridApiKey)
 	response, err := client.Send(message)
 	if err != nil {
 		return nil, errors.New("Send mail fail")

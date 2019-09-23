@@ -18,6 +18,7 @@ const (
 var Client *mongo.Client
 var DatabaseName string
 var UrlDatabase string
+var SendgridApiKey string
 func init() {
 	SetupEnvironment()
 	client, err := mongo.NewClient(options.Client().ApplyURI(UrlDatabase))
@@ -43,4 +44,5 @@ func SetupEnvironment() {
 	}
 	DatabaseName = os.Getenv("database")
 	UrlDatabase = os.Getenv("ipdatabase")
+	SendgridApiKey = os.Getenv("sendgrid_api_key")
 }
