@@ -26,6 +26,13 @@ func CreateStockHandles(c echo.Context) error {
 			Message: err.Error()})
 	}
 	stockReq.Status = data
+
+	if stockReq.Customer == "" {
+		return c.JSON(http.StatusBadRequest , models.ErrorResponse{
+			Code: constant.BadRequest,
+			Message: "Customer is required"})
+	}
+
 	dataStock, err := database.CreateStock(stockReq)
 	if err != nil {
 		return c.JSON(http.StatusForbidden, models.ErrorResponse{
