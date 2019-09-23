@@ -6,6 +6,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
+	"os"
+	"log"
+	"github.com/joho/godotenv"
 )
 
 const (
@@ -13,9 +16,11 @@ const (
 )
 
 var Client *mongo.Client
-
+var DatabaseName string
+var UrlDatabase string
 func init() {
-	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:27017"))
+	SetupEnvironment()
+	client, err := mongo.NewClient(options.Client().ApplyURI(UrlDatabase))
 	if err != nil {
 		panic(err)
 	}
@@ -29,4 +34,13 @@ func init() {
 		panic(err)
 	}
 	Client = client
+}
+
+func SetupEnvironment() {
+	err := godotenv.Load()
+	if err != nil {
+	  log.Fatal("Error loading .env file")
+	}
+	DatabaseName = os.Getenv("database")
+	UrlDatabase = os.Getenv("ipdatabase")
 }

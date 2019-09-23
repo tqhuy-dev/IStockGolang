@@ -16,7 +16,7 @@ import (
 )
 
 func LoginAccount(loginBody models.LoginBody) (*models.Customer , error) {
-	customerCollection := Client.Database("IStock").Collection("customer")
+	customerCollection := Client.Database(DatabaseName).Collection("customer")
 	// fmt.Println(loginBody)
 	filter := bson.D{
 		{"email",loginBody.Email},
@@ -41,7 +41,7 @@ func InsertCustomer(req models.CustomerReq) interface{} {
 		Status:1,
 		Email:req.Email,
 		Password:req.Password}
-	customerCollection := Client.Database("IStock").Collection("customer")
+	customerCollection := Client.Database(DatabaseName).Collection("customer")
 	_, errorQueryInsert := customerCollection.InsertOne(context.TODO(), newCustomer)
 	if errorQueryInsert != nil {
 		log.Fatal(errorQueryInsert)
@@ -59,7 +59,7 @@ func InsertCustomer(req models.CustomerReq) interface{} {
 
 func RetrieveAllCustomer() interface{} {
 	var customer []*models.Customer
-	customerCollection := Client.Database("IStock").Collection("customer")
+	customerCollection := Client.Database(DatabaseName).Collection("customer")
 	findOptions := options.Find()
 	findOptions.SetLimit(100)
 	cur, err := customerCollection.Find(context.TODO(), bson.D{{}}, findOptions)
@@ -90,7 +90,7 @@ func RetrieveAllCustomer() interface{} {
 }
 
 func UpdateCustomer(req models.CustomerReq , email string) (*models.Customer , error){
-	customerCollection := Client.Database("IStock").Collection("customer")
+	customerCollection := Client.Database(DatabaseName).Collection("customer")
 
 	filter := bson.D{{"email",email}}
 
@@ -112,7 +112,7 @@ func UpdateCustomer(req models.CustomerReq , email string) (*models.Customer , e
 }
 
 func DeleteCustomer(email string) (*models.Customer , error) {
-	customerCollection := Client.Database("IStock").Collection("customer")
+	customerCollection := Client.Database(DatabaseName).Collection("customer")
 	filter := bson.D{{"email" , email}}
 	updateBody := bson.D{
 		{"$set", bson.D{
@@ -129,7 +129,7 @@ func DeleteCustomer(email string) (*models.Customer , error) {
 
 func FindUserByEmail(email string) (*models.Customer, error) {
 	var customer models.Customer
-	customerCollection := Client.Database("IStock").Collection("customer")
+	customerCollection := Client.Database(DatabaseName).Collection("customer")
 	err := customerCollection.FindOne(context.TODO() , bson.D{
 		{"email" , email},
 	}).Decode(&customer)
@@ -140,7 +140,7 @@ func FindUserByEmail(email string) (*models.Customer, error) {
 }
 func IncID() interface{} {
 	var sequenceID models.SequenceID
-	seCollection := Client.Database("IStock").Collection("sequence")
+	seCollection := Client.Database(DatabaseName).Collection("sequence")
 	filter := bson.D{{"sequence_type","sequence_id"}}
 	updateBody := bson.D{
 		{"$inc", bson.D{
@@ -158,7 +158,7 @@ func IncID() interface{} {
 }
 
 func Syncnorize() {
-	customerCollection := Client.Database("IStock").Collection("customer")
+	customerCollection := Client.Database(DatabaseName).Collection("customer")
 	updateBody := bson.D{
 		{"$set",bson.D{
 			{"password","123456"},
@@ -168,7 +168,7 @@ func Syncnorize() {
 }
 
 func ChangePassword(passwordReq models.ChangePasswordReq) (*models.Customer , error) {
-	customerCollection := Client.Database("IStock").Collection("customer")
+	customerCollection := Client.Database(DatabaseName).Collection("customer")
 	filter := bson.D{
 		{"password",passwordReq.OldPassword},
 		{"email",passwordReq.Email},
@@ -207,7 +207,7 @@ func RetrieveCustomerByFilter(filterBody models.FilterUser) ([]*models.Customer,
 
 	}
 
-	customerCollection := Client.Database("IStock").Collection("customer")
+	customerCollection := Client.Database(DatabaseName).Collection("customer")
 	var customers []*models.Customer
 
 	findOption := options.Find()
