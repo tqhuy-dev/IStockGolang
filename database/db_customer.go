@@ -9,6 +9,8 @@ import (
 	"log"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"crypto/sha256"
+	"github.com/sendgrid/sendgrid-go"
+	"github.com/sendgrid/sendgrid-go/helpers/mail"
 	"github.com/tranhuy-dev/IStockGolang/core/constant"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -44,9 +46,14 @@ func InsertCustomer(req models.CustomerReq) interface{} {
 	if errorQueryInsert != nil {
 		log.Fatal(errorQueryInsert)
 	}
+	sendmail , err := SendMail()
+	if err != nil {
+		return err
+	}
 	hashToken := sha256.Sum256([]byte(newCustomer.Email))
 	responseBody := map[string]interface{}{}
 	responseBody["token"] = hashToken[:]
+	responseBody["email"] = sendmail
 	return responseBody
 }
 
@@ -227,4 +234,20 @@ func RetrieveCustomerByFilter(filterBody models.FilterUser) ([]*models.Customer,
 	cur.Close(context.TODO())
 
 	return customers , nil
+}
+
+func SendMail() (interface{}, error) {
+	from := mail.NewEmail("Example user", "tranquochuy15091996@gmail.com")
+	subject := "Test sendgrid"
+	to := mail.NewEmail("Example user", "tqhuy1996.developer@gmail.com")
+	plainTextContent := "and easy to do anywhere, even with Go"
+	htmlContent := "<strong>and easy to do anywhere, even with Go</strong>"
+	message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
+	client := sendgrid.NewSendClient("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")
+	response, err := client.Send(message)
+	if err != nil {
+		return nil, errors.New("Send mail fail")
+	}
+
+	return response , nil
 }

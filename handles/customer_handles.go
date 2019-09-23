@@ -1,9 +1,10 @@
 package handles
 
 import (
+	"crypto/sha256"
 	"net/http"
 	"strconv"
-	"crypto/sha256"
+
 	"github.com/labstack/echo"
 	"github.com/tranhuy-dev/IStockGolang/core/constant"
 	"github.com/tranhuy-dev/IStockGolang/database"
@@ -96,26 +97,26 @@ func ChangePassword(c echo.Context) error {
 	return c.JSON(http.StatusOK, models.SuccessReponse{
 		Code:    201,
 		Message: "Change password success",
-		Data: dataChangePassword})
+		Data:    dataChangePassword})
 }
 
 func FindUserByFilter(c echo.Context) error {
 	var filterBody models.FilterUser
-	filterBody.Age,_= strconv.Atoi(c.FormValue("age"))
-	filterBody.Address= c.FormValue("address")
+	filterBody.Age, _ = strconv.Atoi(c.FormValue("age"))
+	filterBody.Address = c.FormValue("address")
 	filterBody.Name = c.FormValue("name")
-	customers , err := database.RetrieveCustomerByFilter(filterBody)
+	customers, err := database.RetrieveCustomerByFilter(filterBody)
 	if err != nil {
-		return c.JSON(http.StatusBadGateway , models.ErrorResponse{
-			Code: constant.ExpectedError,
+		return c.JSON(http.StatusBadGateway, models.ErrorResponse{
+			Code:    constant.ExpectedError,
 			Message: err.Error(),
 		})
 	}
 
-	return c.JSON(http.StatusOK , models.SuccessReponse{
-		Code: 200 , 
+	return c.JSON(http.StatusOK, models.SuccessReponse{
+		Code:    200,
 		Message: "Retrieve customer filter",
-		Data: customers})
+		Data:    customers})
 }
 
 func LoginAccount(c echo.Context) error {
@@ -127,18 +128,18 @@ func LoginAccount(c echo.Context) error {
 			Message: "Bad parameter"})
 	}
 
-	customer , err := database.LoginAccount(loginBody)
+	customer, err := database.LoginAccount(loginBody)
 	if err != nil {
-		return c.JSON(http.StatusNotFound,models.ErrorResponse{
-			Code: constant.NotFound,
+		return c.JSON(http.StatusNotFound, models.ErrorResponse{
+			Code:    constant.NotFound,
 			Message: err.Error()})
 	}
 	hashtoken := sha256.Sum256([]byte(customer.Email))
 	dataResponse := map[string]interface{}{}
-	dataResponse["customer"] = customer;
-	dataResponse["token"] = hashtoken[:];
-	return c.JSON(http.StatusOK,models.SuccessReponse{
-		Code: constant.Success,
+	dataResponse["customer"] = customer
+	dataResponse["token"] = hashtoken[:]
+	return c.JSON(http.StatusOK, models.SuccessReponse{
+		Code:    constant.Success,
 		Message: "Login success",
-		Data: dataResponse})
+		Data:    dataResponse})
 }
