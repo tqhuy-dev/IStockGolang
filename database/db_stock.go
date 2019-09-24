@@ -58,3 +58,16 @@ func RetrieveStockUser(email string) ([]*models.Stock, error) {
 
 	return listStock , nil
 }
+
+func RetriveStockByToken(token string) ([]*models.Stock , error) {
+	dataSession , err := CheckToken(token)
+	if err != nil {
+		return nil , err
+	}
+	dataStock , err := RetrieveStockUser(dataSession.Customer)
+	if err != nil {
+		return nil , err
+	}
+
+	return dataStock , nil
+}

@@ -62,3 +62,19 @@ func RetriveStockByEmail(c echo.Context) error {
 		Message: "Retrice success",
 		Data:    dataStock})
 }
+
+func RetrieveStockByToken(c echo.Context) error {
+	token := GetTokenHeader(c)
+	dataStock , err := database.RetriveStockByToken(token)
+
+	if err != nil {
+		return c.JSON(http.StatusNetworkAuthenticationRequired , models.ErrorResponse{
+			Code: constant.Authentication,
+			Message: err.Error()})
+	}
+
+	return c.JSON(http.StatusOK , models.SuccessReponse{
+		Code: constant.Success,
+		Message: "Success",
+		Data: dataStock})
+}

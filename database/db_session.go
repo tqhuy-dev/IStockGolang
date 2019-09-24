@@ -11,8 +11,17 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func CheckToken(token string) {
+func CheckToken(token string) (*models.Session, error) {
+	sessionCollection := Client.Database(DatabaseName).Collection("session")
+	filter := bson.D{
+		{"token" , token}}
+	var session models.Session
 
+	err := sessionCollection.FindOne(context.TODO() , filter).Decode(&session)
+	if err != nil {
+		return nil , errors.New("this token has expired")
+	}
+	return &session , nil
 }
 
 func UpdateSession(token, customer string) (interface{}, error) {
