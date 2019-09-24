@@ -42,7 +42,7 @@ func SetupEnvironment() {
 	if err != nil {
 	  log.Fatal("Error loading .env file")
 	}
-	DatabaseName = os.Getenv("database")
-	UrlDatabase = os.Getenv("ipdatabase")
+	DatabaseName = os.Getenv("database_local")
+	UrlDatabase = os.Getenv("ipdatabase_local")
 	SendgridApiKey = os.Getenv("sendgrid_api_key")
 }
