@@ -9,7 +9,7 @@ import (
 )
 
 func CreateStock(stock models.Stock) (interface{} , error){
-	stockCollection := Client.Database("IStock").Collection("stock")
+	stockCollection := Client.Database(DatabaseName).Collection("stock")
 	idStock , err := GetSequenceStock("stock")
 	if err != nil {
 		return nil , errors.New(err.Error())
@@ -33,7 +33,7 @@ func CreateStock(stock models.Stock) (interface{} , error){
 }
 
 func RetrieveStockUser(email string) ([]*models.Stock, error) {
-	stockCollection := Client.Database("IStock").Collection("stock")
+	stockCollection := Client.Database(DatabaseName).Collection("stock")
 	var listStock []*models.Stock
 	findOption := options.Find()
 	findOption.SetLimit(100)
