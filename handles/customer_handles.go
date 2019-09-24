@@ -1,7 +1,6 @@
 package handles
 
 import (
-	"crypto/sha256"
 	"net/http"
 	"strconv"
 
@@ -128,18 +127,14 @@ func LoginAccount(c echo.Context) error {
 			Message: "Bad parameter"})
 	}
 
-	customer, err := database.LoginAccount(loginBody)
+	dataLogin , err := database.LoginAccount(loginBody)
 	if err != nil {
 		return c.JSON(http.StatusNotFound, models.ErrorResponse{
 			Code:    constant.NotFound,
 			Message: err.Error()})
 	}
-	hashtoken := sha256.Sum256([]byte(customer.Email))
-	dataResponse := map[string]interface{}{}
-	dataResponse["customer"] = customer
-	dataResponse["token"] = hashtoken[:]
 	return c.JSON(http.StatusOK, models.SuccessReponse{
 		Code:    constant.Success,
 		Message: "Login success",
-		Data:    dataResponse})
+		Data:    dataLogin})
 }

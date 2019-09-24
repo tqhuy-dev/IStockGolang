@@ -2,6 +2,7 @@ package database
 
 import (
 	"github.com/tranhuy-dev/IStockGolang/models"
+	"github.com/tranhuy-dev/IStockGolang/core/mathematic"
 	"go.mongodb.org/mongo-driver/bson"
 	"context"
 	"errors"
@@ -15,7 +16,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func LoginAccount(loginBody models.LoginBody) (*models.Customer , error) {
+func LoginAccount(loginBody models.LoginBody) (interface{} , error) {
 	customerCollection := Client.Database(DatabaseName).Collection("customer")
 	// fmt.Println(loginBody)
 	filter := bson.D{
@@ -28,7 +29,16 @@ func LoginAccount(loginBody models.LoginBody) (*models.Customer , error) {
 	if err != nil {
 		return nil,errors.New("Login fail")
 	}
-	return &customer,nil
+
+	token := mathematic.GetHash(customer.Email)
+	_ , errSession := CreateSessionToken(token , customer.Email)
+	if errSession != nil {
+		return nil , errSession
+	}
+	dataResponse := map[string]interface{}{}
+	dataResponse["customer"] = customer
+	dataResponse["token"] = token
+	return dataResponse ,nil
 }
 
 func InsertCustomer(req models.CustomerReq) interface{} {
