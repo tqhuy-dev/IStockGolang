@@ -2,7 +2,7 @@ package handles
 
 import (
 	"net/http"
-
+	"strconv"
 	"github.com/labstack/echo"
 	"github.com/tranhuy-dev/IStockGolang/core/constant"
 	"github.com/tranhuy-dev/IStockGolang/core/mathematic"
@@ -28,8 +28,8 @@ func CreateStockHandles(c echo.Context) error {
 	stockReq.Status = data
 
 	if stockReq.Customer == "" {
-		return c.JSON(http.StatusBadRequest , models.ErrorResponse{
-			Code: constant.BadRequest,
+		return c.JSON(http.StatusBadRequest, models.ErrorResponse{
+			Code:    constant.BadRequest,
 			Message: "Customer is required"})
 	}
 
@@ -65,16 +65,45 @@ func RetriveStockByEmail(c echo.Context) error {
 
 func RetrieveStockByToken(c echo.Context) error {
 	token := GetTokenHeader(c)
-	dataStock , err := database.RetriveStockByToken(token)
+	dataStock, err := database.RetriveStockByToken(token)
 
 	if err != nil {
-		return c.JSON(http.StatusNetworkAuthenticationRequired , models.ErrorResponse{
-			Code: constant.Authentication,
+		return c.JSON(http.StatusNetworkAuthenticationRequired, models.ErrorResponse{
+			Code:    constant.Authentication,
 			Message: err.Error()})
 	}
 
-	return c.JSON(http.StatusOK , models.SuccessReponse{
-		Code: constant.Success,
+	return c.JSON(http.StatusOK, models.SuccessReponse{
+		Code:    constant.Success,
 		Message: "Success",
-		Data: dataStock})
+		Data:    dataStock})
+}
+
+func UpdateStock(c echo.Context) error {
+	token := GetTokenHeader(c)
+	var stockUpdateBody models.Stock
+	err := c.Bind(&stockUpdateBody)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.ErrorResponse{
+			Code:    constant.BadRequest,
+			Message: "Bad parameters"})
+	}
+
+	idStock , err := strconv.Atoi(c.FormValue("stock_id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.ErrorResponse{
+			Code:    constant.BadRequest,
+			Message: "Bad parameters"})
+	}
+	updateStockData, errUpdateStock := database.UpdateStock(token , idStock , stockUpdateBody)
+	if errUpdateStock != nil {
+		return c.JSON(http.StatusBadRequest, models.ErrorResponse{
+			Code:    constant.BadRequest,
+			Message: errUpdateStock.Error()})
+	}
+
+	return c.JSON(http.StatusOK, models.SuccessReponse{
+		Code:    constant.Success,
+		Message: "Success",
+		Data:    updateStockData})
 }

@@ -6,7 +6,7 @@ type Stock struct {
 	Description string `json:"description" bson:"description"`
 	Status string `json:"status" bson:"status"`
 	Price Price `json:"price" bson:"price"`
-	ID int `json:"id" bson:"id"`
+	ID int `json:"id_stock" bson:"id_stock"`
 }
 
 type Price struct {

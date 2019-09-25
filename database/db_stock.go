@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"github.com/tranhuy-dev/IStockGolang/models"
 	"github.com/tranhuy-dev/IStockGolang/core/constant"
+	// "fmt"
 )
 
 func CreateStock(stock models.Stock) (interface{} , error){
@@ -70,4 +71,37 @@ func RetriveStockByToken(token string) ([]*models.Stock , error) {
 	}
 
 	return dataStock , nil
+}
+
+func UpdateStock(token string, idStock int, stockBody models.Stock) (interface{} , error) {
+	stockCollection := Client.Database(DatabaseName).Collection("stock")
+	dataSession , errSession := CheckToken(token)
+	if errSession != nil {
+		return nil , errSession
+	}
+	filter := bson.D{
+		{"id_stock" , idStock},
+		{"customer",dataSession.Customer},
+}
+
+	updateBody := bson.M{}
+	if stockBody.Description != "" {
+		updateBody["description"] = stockBody.Description
+	}
+	if stockBody.Name != "" {
+		updateBody["name"] = stockBody.Name
+	}
+	if stockBody.Status != "" {
+		updateBody["status"] = stockBody.Status
+	}
+	update := bson.D{
+		{"$set", updateBody}}
+
+	var updateStock models.Stock
+	errUpdateStock := stockCollection.FindOneAndUpdate(context.TODO() , filter , update).Decode(&updateStock)
+	if errUpdateStock != nil {
+		return nil , errors.New("Update stock fail")
+	}
+
+	return &updateStock , nil
 }
