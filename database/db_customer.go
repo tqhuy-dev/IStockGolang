@@ -124,9 +124,13 @@ func UpdateCustomer(req models.CustomerReq , token string) (*models.Customer , e
 	return &customer, nil
 }
 
-func DeleteCustomer(email string) (*models.Customer , error) {
+func DeleteCustomer(token string) (*models.Customer , error) {
 	customerCollection := Client.Database(DatabaseName).Collection("customer")
-	filter := bson.D{{"email" , email}}
+	dataSession, errSession := CheckToken(token)
+	if errSession != nil {
+		return nil , errSession
+	}
+	filter := bson.D{{"email" , dataSession.Customer}}
 	updateBody := bson.D{
 		{"$set", bson.D{
 			{"status",0},

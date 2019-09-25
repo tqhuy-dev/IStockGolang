@@ -14,5 +14,5 @@ func CustomerController(e *echo.Echo) {
 	publicRoute.POST("/login" , handles.LoginAccount)
 	publicRoute.POST("/", handles.CreateCustomer)
 	publicRoute.PUT("/", handles.UpdateCustomer)
-	publicRoute.DELETE("/:email" , handles.DeleteCustomer)
+	publicRoute.DELETE("/" , handles.DeleteCustomer)
 }

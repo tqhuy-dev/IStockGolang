@@ -56,8 +56,8 @@ func UpdateCustomer(c echo.Context) error {
 }
 
 func DeleteCustomer(c echo.Context) error {
-	idCustomer := c.Param("email")
-	deleteResult, err := database.DeleteCustomer(idCustomer)
+	token := GetTokenHeader(c)
+	deleteResult, err := database.DeleteCustomer(token)
 	if err != nil {
 		return c.JSON(http.StatusNotFound, models.ErrorResponse{
 			Code:    constant.NotFound,
