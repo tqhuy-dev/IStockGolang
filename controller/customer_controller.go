@@ -13,6 +13,6 @@ func CustomerController(e *echo.Echo) {
 	publicRoute.POST("/password" , handles.ChangePassword)
 	publicRoute.POST("/login" , handles.LoginAccount)
 	publicRoute.POST("/", handles.CreateCustomer)
-	publicRoute.PUT("/:email", handles.UpdateCustomer)
+	publicRoute.PUT("/", handles.UpdateCustomer)
 	publicRoute.DELETE("/:email" , handles.DeleteCustomer)
 }

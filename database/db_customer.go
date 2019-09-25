@@ -99,10 +99,13 @@ func RetrieveAllCustomer() interface{} {
 	return responseBody
 }
 
-func UpdateCustomer(req models.CustomerReq , email string) (*models.Customer , error){
+func UpdateCustomer(req models.CustomerReq , token string) (*models.Customer , error){
 	customerCollection := Client.Database(DatabaseName).Collection("customer")
-
-	filter := bson.D{{"email",email}}
+	dataSession, errSession := CheckToken(token)
+	if errSession != nil {
+		return nil , errSession
+	}
+	filter := bson.D{{"email",dataSession.Customer}}
 
 	updateBody := bson.D{
 		{"$set" , bson.D{
@@ -177,11 +180,15 @@ func Syncnorize() {
 	customerCollection.UpdateMany(context.TODO(),bson.D{{}} , updateBody)
 }
 
-func ChangePassword(passwordReq models.ChangePasswordReq) (*models.Customer , error) {
+func ChangePassword(passwordReq models.ChangePasswordReq , token string) (*models.Customer , error) {
 	customerCollection := Client.Database(DatabaseName).Collection("customer")
+	dataSession, errSession := CheckToken(token)
+	if errSession != nil {
+		return nil , errSession
+	}
 	filter := bson.D{
 		{"password",passwordReq.OldPassword},
-		{"email",passwordReq.Email},
+		{"email", dataSession.Customer},
 	}
 
 	updateBody := bson.D{

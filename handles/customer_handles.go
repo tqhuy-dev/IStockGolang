@@ -36,13 +36,13 @@ func CreateCustomer(c echo.Context) error {
 
 func UpdateCustomer(c echo.Context) error {
 	var req models.CustomerReq
-	idCustomer := c.Param("email")
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(http.StatusBadRequest, models.ErrorResponse{
 			Code:    constant.BadRequest,
 			Message: "Bad request"})
 	}
-	updateResult, err := database.UpdateCustomer(req, idCustomer)
+	token := GetTokenHeader(c)
+	updateResult, err := database.UpdateCustomer(req, token)
 
 	if err != nil {
 		return c.JSON(http.StatusNotFound, models.ErrorResponse{
@@ -86,7 +86,8 @@ func ChangePassword(c echo.Context) error {
 			Message: "Bad request"})
 	}
 
-	dataChangePassword, err := database.ChangePassword(req)
+	token := GetTokenHeader(c)
+	dataChangePassword, err := database.ChangePassword(req, token)
 	if err != nil {
 		return c.JSON(http.StatusNotFound, models.ErrorResponse{
 			Code:    401,
