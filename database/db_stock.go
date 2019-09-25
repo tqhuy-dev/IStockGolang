@@ -9,23 +9,24 @@ import (
 	// "fmt"
 )
 
-func CreateStock(stock models.Stock) (interface{} , error){
+func CreateStock(token string , stock models.Stock) (interface{} , error){
 	stockCollection := Client.Database(DatabaseName).Collection("stock")
+	dataSession, errSession := CheckToken(token)
+	if errSession != nil {
+		return nil , errSession
+	}
+
 	idStock , err := GetSequenceStock("stock")
 	if err != nil {
 		return nil , errors.New(err.Error())
 	}
 	newStock := models.Stock{
-		Customer: stock.Customer,
+		Customer: dataSession.Customer,
 		Description: stock.Description,
 		Name: stock.Name,
 		Status: stock.Status,
 		ID: idStock}
 
-	_ , searchUserError := FindUserByEmail(stock.Customer)
-	if searchUserError  != nil {
-		return nil , errors.New(constant.MessageUserNotFound)
-	}
 	insertResult , insertError := stockCollection.InsertOne(context.TODO() , newStock)
 	if insertError != nil {
 		return nil,errors.New("Insert fail") 

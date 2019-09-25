@@ -18,6 +18,7 @@ func CreateStockHandles(c echo.Context) error {
 			Code:    constant.BadRequest,
 			Message: "Bad parameters"})
 	}
+	token := GetTokenHeader(c)
 	stockStatusArr := []string{constant.STATUS_BLOCK, constant.STATUS_CLOSE, constant.STATUS_OPEN}
 	data, err := mathematic.FindElementString(stockReq.Status, stockStatusArr)
 	if err != nil {
@@ -27,13 +28,7 @@ func CreateStockHandles(c echo.Context) error {
 	}
 	stockReq.Status = data
 
-	if stockReq.Customer == "" {
-		return c.JSON(http.StatusBadRequest, models.ErrorResponse{
-			Code:    constant.BadRequest,
-			Message: "Customer is required"})
-	}
-
-	dataStock, err := database.CreateStock(stockReq)
+	dataStock, err := database.CreateStock(token , stockReq)
 	if err != nil {
 		return c.JSON(http.StatusForbidden, models.ErrorResponse{
 			Code:    constant.ExpectedError,
