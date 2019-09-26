@@ -7,6 +7,6 @@ import (
 
 func ProductionController (e *echo.Echo) {
 	publicRoute := e.Group("/v1/production")
-	publicRoute.POST("/" , handles.AddProductionHandles)
+	publicRoute.POST("/:stock" , handles.AddProductionHandles)
 	publicRoute.GET("/" , handles.GetProductionByTokenHandles)
 }

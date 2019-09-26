@@ -106,3 +106,19 @@ func UpdateStock(token string, idStock int, stockBody models.Stock) (interface{}
 
 	return &updateStock , nil
 }
+
+func CheckUserStock(customer string , idStock int) (interface{} , error) {
+	stockCollection := Client.Database(DatabaseName).Collection("stock")
+	filter := bson.D{
+		{"customer" , customer},
+		{"id_stock" , idStock},
+	}
+
+	var Stock models.Stock
+	err := stockCollection.FindOne(context.TODO() , filter).Decode(&Stock)
+	if err != nil {
+		return nil , errors.New("Stock not found")
+	}
+
+	return Stock , nil
+}

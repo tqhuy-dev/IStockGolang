@@ -12,3 +12,7 @@ const MessageAuthentication = "Authentication"
 const STATUS_OPEN = "OPEN"
 const STATUS_CLOSE = "CLOSE"
 const STATUS_BLOCK = "BLOCK"
+
+const STATUS_PROD_OPEN = "OPEN"
+const STATUS_PROD_CLOSED = "CLOSED"
+const STATUS_PROD_BLOCK = "BLOCK"
