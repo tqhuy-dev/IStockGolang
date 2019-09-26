@@ -33,6 +33,7 @@ func initFrameword(){
 	}))
 	controller.CustomerController(e)
 	controller.StockController(e)
+	controller.ProductionController(e)
 	port := os.Getenv("PORT")
 	fmt.Printf("Server listening at 3000")
 	err := e.Start(":" + port)
