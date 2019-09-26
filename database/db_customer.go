@@ -93,6 +93,7 @@ func RetrieveAllCustomer() interface{} {
 	}
 
 	cur.Close(context.TODO())
+	// Syncnorize()
 	responseBody := map[string]interface{}{}
 	responseBody["customer"] = customer
 	responseBody["size"] = len(customer)
@@ -178,7 +179,7 @@ func Syncnorize() {
 	customerCollection := Client.Database(DatabaseName).Collection("customer")
 	updateBody := bson.D{
 		{"$set",bson.D{
-			{"password","123456"},
+			{"role",constant.ROLE_USER},
 		}},
 	}
 	customerCollection.UpdateMany(context.TODO(),bson.D{{}} , updateBody)

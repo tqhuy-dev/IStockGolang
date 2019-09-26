@@ -8,6 +8,9 @@ import (
 	"errors"
 	"time"
 	"strconv"
+	"go.mongodb.org/mongo-driver/bson"
+	"log"
+	// "fmt"
 )
 
 func AddProduction(token string , newProduction models.Production , stockID int) (interface{} , error) {
@@ -33,4 +36,40 @@ func AddProduction(token string , newProduction models.Production , stockID int)
 		return nil , errors.New("Insert production fail")
 	}
 	return dataProduction , nil
+}
+
+func GetProduction(token string , stockID int) (interface{} , error) {
+	productionCollection := Client.Database(DatabaseName).Collection("production")
+
+	dataSession , errSession := CheckToken(token)
+	if errSession != nil {
+		return nil , errSession
+	}
+	filter := bson.M{};
+	filter["customer"] = dataSession.Customer
+	if stockID != -1 {
+		_ , errCheckStock := CheckUserStock(dataSession.Customer , stockID)
+		if errCheckStock != nil {
+			return nil , errCheckStock
+		}
+		filter["stock"] = stockID
+	}
+	// var production []*models.Production
+	cur, errQueryProduction := productionCollection.Find(context.TODO() , filter)
+	var production []*models.Production
+	if errQueryProduction != nil {
+		return nil , errors.New("Retrive production fail")
+	}
+	for cur.Next(context.TODO()) {
+
+		// create a value into which the single document can be decoded
+		var elem models.Production
+		err := cur.Decode(&elem)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		production = append(production, &elem)
+	}
+	return production , nil
 }
