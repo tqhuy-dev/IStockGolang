@@ -16,7 +16,11 @@ func AddProductionHandles(c echo.Context) error {
 	token := GetTokenHeader(c)
 	idStock, _ := strconv.Atoi(c.Param("stock"))
 	var newProduction models.Production
-	ProductionArr := []string {constant.STATUS_PROD_BLOCK,constant.STATUS_PROD_CLOSED,constant.STATUS_PROD_OPEN}
+	ProductionArr := []string {
+		constant.STATUS_PROD_BLOCK,
+		constant.STATUS_PROD_CLOSED,
+		constant.STATUS_PROD_OPEN,
+		constant.STATUS_PROD_SOLD}
 	err := c.Bind(&newProduction)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, models.ErrorResponse{
