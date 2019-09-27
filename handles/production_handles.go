@@ -6,6 +6,7 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/tranhuy-dev/IStockGolang/core/constant"
+	"github.com/tranhuy-dev/IStockGolang/core/mathematic"
 	"github.com/tranhuy-dev/IStockGolang/database"
 	"github.com/tranhuy-dev/IStockGolang/models"
 	// "fmt"
@@ -15,6 +16,7 @@ func AddProductionHandles(c echo.Context) error {
 	token := GetTokenHeader(c)
 	idStock, _ := strconv.Atoi(c.Param("stock"))
 	var newProduction models.Production
+	ProductionArr := []string {constant.STATUS_PROD_BLOCK,constant.STATUS_PROD_CLOSED,constant.STATUS_PROD_OPEN}
 	err := c.Bind(&newProduction)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, models.ErrorResponse{
@@ -22,6 +24,15 @@ func AddProductionHandles(c echo.Context) error {
 			Message: "Bad parameters"})
 	}
 
+	if newProduction.Status != "" {
+		dataStatus , errStatus := mathematic.FindElementString(newProduction.Status , ProductionArr)
+		if errStatus != nil {
+			return c.JSON(http.StatusBadRequest, models.ErrorResponse{
+				Code:    constant.BadRequest,
+				Message: "Wrong status"})
+		}
+		newProduction.Status = dataStatus
+	}
 	resultInsert, errInsert := database.AddProduction(token, newProduction, idStock)
 	if errInsert != nil {
 		return c.JSON(http.StatusBadRequest, models.ErrorResponse{
