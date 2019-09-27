@@ -2,6 +2,7 @@ package database
 
 import (
 	"github.com/tranhuy-dev/IStockGolang/models"
+	"github.com/tranhuy-dev/IStockGolang/models/response_models"
 	"github.com/tranhuy-dev/IStockGolang/core/mathematic"
 	"go.mongodb.org/mongo-driver/bson"
 	"context"
@@ -145,7 +146,7 @@ func DeleteCustomer(token string) (*models.Customer , error) {
 	return &customer,nil
 }
 
-func FindUserByEmail(email string) (*models.Customer, error) {
+func FindUserByEmail(token , email string) (interface{}, error) {
 	var customer models.Customer
 	customerCollection := Client.Database(DatabaseName).Collection("customer")
 	err := customerCollection.FindOne(context.TODO() , bson.D{
@@ -154,7 +155,37 @@ func FindUserByEmail(email string) (*models.Customer, error) {
 	if err != nil {
 		return nil, errors.New(constant.MessageUserNotFound)
 	}
-	return &customer,nil
+	dataStock , errResultStock := RetrieveStockUser(email)
+	if errResultStock != nil {
+		return nil , errResultStock
+	}
+	var StockList []response_models.StockResponse
+	for _ , v := range dataStock {
+		dataProduction , errProduct := GetProduction(token , v.ID)
+		if errProduct != nil {
+			return nil , errProduct
+		}
+		StockElement := response_models.StockResponse{
+			Name: v.Name,
+			Description: v.Description,
+			Price: v.Price,
+			ID: v.ID,
+			Product: dataProduction,
+		}
+
+		StockList = append(StockList , StockElement)
+	}
+
+	customerResponseModel := response_models.CustomerResponse{
+		FirstName: customer.FirstName,
+		LastName: customer.LastName,
+		Age: customer.Age,
+		Address: customer.Address,
+		Email: customer.Email,
+		Stock: StockList,
+	}
+
+	return customerResponseModel,nil
 }
 func IncID() interface{} {
 	var sequenceID models.SequenceID

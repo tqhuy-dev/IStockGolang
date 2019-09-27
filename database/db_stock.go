@@ -34,9 +34,9 @@ func CreateStock(token string , stock models.Stock) (interface{} , error){
 	return insertResult, nil
 }
 
-func RetrieveStockUser(email string) ([]*models.Stock, error) {
+func RetrieveStockUser(email string) ([]models.Stock, error) {
 	stockCollection := Client.Database(DatabaseName).Collection("stock")
-	var listStock []*models.Stock
+	var listStock []models.Stock
 	findOption := options.Find()
 	findOption.SetLimit(100)
 	filter := bson.D{
@@ -55,13 +55,13 @@ func RetrieveStockUser(email string) ([]*models.Stock, error) {
 			return nil , errors.New(constant.MessageUnexpectedError)
 		}
 
-		listStock = append(listStock  , &elementStock)
+		listStock = append(listStock  , elementStock)
 	}
 
 	return listStock , nil
 }
 
-func RetriveStockByToken(token string) ([]*models.Stock , error) {
+func RetriveStockByToken(token string) ([]models.Stock , error) {
 	dataSession , err := CheckToken(token)
 	if err != nil {
 		return nil , err

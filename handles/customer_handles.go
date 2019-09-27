@@ -71,7 +71,8 @@ func DeleteCustomer(c echo.Context) error {
 
 func GetCustomerByEmail(c echo.Context) error {
 	idCustomer := c.Param("email")
-	customerData, err := database.FindUserByEmail(idCustomer)
+	token := GetTokenHeader(c)
+	customerData, err := database.FindUserByEmail(token , idCustomer)
 	if err != nil {
 		return c.JSON(http.StatusOK, models.ErrorResponse{Code: constant.NotFound, Message: err.Error()})
 	}

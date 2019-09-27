@@ -39,7 +39,7 @@ func AddProduction(token string, newProduction models.Production, stockID int) (
 	return dataProduction, nil
 }
 
-func GetProduction(token string, stockID int) (interface{}, error) {
+func GetProduction(token string, stockID int) ([]models.Production, error) {
 	productionCollection := Client.Database(DatabaseName).Collection("production")
 
 	dataSession, errSession := CheckToken(token)
@@ -57,7 +57,7 @@ func GetProduction(token string, stockID int) (interface{}, error) {
 	}
 	// var production []*models.Production
 	cur, errQueryProduction := productionCollection.Find(context.TODO(), filter)
-	var production []*models.Production
+	var production []models.Production
 	if errQueryProduction != nil {
 		return nil, errors.New("Retrive production fail")
 	}
@@ -70,7 +70,7 @@ func GetProduction(token string, stockID int) (interface{}, error) {
 			log.Fatal(err)
 		}
 
-		production = append(production, &elem)
+		production = append(production, elem)
 	}
 	return production, nil
 }
