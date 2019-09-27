@@ -155,25 +155,9 @@ func FindUserByEmail(token , email string) (interface{}, error) {
 	if err != nil {
 		return nil, errors.New(constant.MessageUserNotFound)
 	}
-	dataStock , errResultStock := RetrieveStockUser(email)
+	dataStock , errResultStock := RetrieveStockUser(token , email)
 	if errResultStock != nil {
 		return nil , errResultStock
-	}
-	var StockList []response_models.StockResponse
-	for _ , v := range dataStock {
-		dataProduction , errProduct := GetProduction(token , v.ID)
-		if errProduct != nil {
-			return nil , errProduct
-		}
-		StockElement := response_models.StockResponse{
-			Name: v.Name,
-			Description: v.Description,
-			Price: v.Price,
-			ID: v.ID,
-			Product: dataProduction,
-		}
-
-		StockList = append(StockList , StockElement)
 	}
 
 	customerResponseModel := response_models.CustomerResponse{
@@ -182,7 +166,7 @@ func FindUserByEmail(token , email string) (interface{}, error) {
 		Age: customer.Age,
 		Address: customer.Address,
 		Email: customer.Email,
-		Stock: StockList,
+		Stock: dataStock,
 	}
 
 	return customerResponseModel,nil

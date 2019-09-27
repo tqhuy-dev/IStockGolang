@@ -43,8 +43,8 @@ func CreateStockHandles(c echo.Context) error {
 
 func RetriveStockByEmail(c echo.Context) error {
 	email := c.FormValue("email")
-
-	dataStock, err := database.RetrieveStockUser(email)
+	token := GetTokenHeader(c)
+	dataStock, err := database.RetrieveStockUser(token , email)
 
 	if err != nil {
 		return c.JSON(http.StatusNotFound, models.ErrorResponse{

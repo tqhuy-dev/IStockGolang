@@ -19,4 +19,5 @@ type StockResponse struct {
 	Price models.Price `json:"price"`
 	Product interface{} `json:"product"`
 	ID int `json:"id_stock"`
+	Status string `json:"status"`
 }

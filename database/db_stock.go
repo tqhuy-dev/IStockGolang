@@ -5,6 +5,7 @@ import (
 	"errors"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"github.com/tranhuy-dev/IStockGolang/models"
+	"github.com/tranhuy-dev/IStockGolang/models/response_models"
 	"github.com/tranhuy-dev/IStockGolang/core/constant"
 	// "fmt"
 )
@@ -34,9 +35,9 @@ func CreateStock(token string , stock models.Stock) (interface{} , error){
 	return insertResult, nil
 }
 
-func RetrieveStockUser(email string) ([]models.Stock, error) {
+func RetrieveStockUser(token , email string) (interface{}, error) {
 	stockCollection := Client.Database(DatabaseName).Collection("stock")
-	var listStock []models.Stock
+	var listStockRes []response_models.StockResponse
 	findOption := options.Find()
 	findOption.SetLimit(100)
 	filter := bson.D{
@@ -50,23 +51,35 @@ func RetrieveStockUser(email string) ([]models.Stock, error) {
 	for cur.Next(context.TODO()) {
 		var elementStock models.Stock
 		err := cur.Decode(&elementStock)
-
+		dataProduction , errDataProduct := GetProduction(token , elementStock.ID)
+		if errDataProduct != nil {
+			return nil , errDataProduct
+		}
+		elementStockRes := response_models.StockResponse{
+			Name: elementStock.Name,
+			Price: elementStock.Price,
+			Description: elementStock.Description,
+			ID: elementStock.ID,
+			Status: elementStock.Status,
+			Product: dataProduction,
+		}
 		if err != nil {
 			return nil , errors.New(constant.MessageUnexpectedError)
 		}
 
-		listStock = append(listStock  , elementStock)
+		listStockRes = append(listStockRes  , elementStockRes)
+
 	}
 
-	return listStock , nil
+	return listStockRes , nil
 }
 
-func RetriveStockByToken(token string) ([]models.Stock , error) {
+func RetriveStockByToken(token string) (interface{} , error) {
 	dataSession , err := CheckToken(token)
 	if err != nil {
 		return nil , err
 	}
-	dataStock , err := RetrieveStockUser(dataSession.Customer)
+	dataStock , err := RetrieveStockUser(token , dataSession.Customer)
 	if err != nil {
 		return nil , err
 	}
