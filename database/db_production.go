@@ -36,6 +36,11 @@ func AddProduction(token string, newProduction models.Production, stockID int) (
 	if err != nil {
 		return nil, errors.New("Insert production fail")
 	}
+
+	_, errUpdateStock := UpdateTotalPriceStock(newProduction , stockID)
+	if errUpdateStock != nil {
+		return nil , errUpdateStock
+	}
 	return dataProduction, nil
 }
 

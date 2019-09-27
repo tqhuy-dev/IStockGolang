@@ -135,3 +135,40 @@ func CheckUserStock(customer string , idStock int) (interface{} , error) {
 
 	return Stock , nil
 }
+
+func UpdateTotalPriceStock(product models.Production, stockID int) (interface{}  , error) {
+	stockCollection := Client.Database(DatabaseName).Collection("stock")
+	filter := bson.D{
+		{"id_stock" , stockID},
+	}
+
+	var Stock models.Stock
+
+	err := stockCollection.FindOne(context.TODO() , filter).Decode(&Stock)
+	if err != nil {
+		return nil , errors.New("Get stock fail")
+	}
+
+	if product.Status != constant.STATUS_PROD_SOLD {
+		Stock.Price.Available += product.Price
+	} else {
+		Stock.Price.Available -= product.Price
+		Stock.Price.Sold += product.Price
+	}
+
+	updateInfor := bson.D{
+		{"price" , Stock.Price},
+	}
+
+	updateBody := bson.D{
+		{"$set" , updateInfor},
+	}
+
+	var newStock models.Stock
+	errUpdate := stockCollection.FindOneAndUpdate(context.TODO() , filter , updateBody).Decode(&newStock)
+	if errUpdate != nil {
+		return nil , errors.New("Update stock fail")
+	}
+
+	return newStock , nil
+}
